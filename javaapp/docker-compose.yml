@@ -1,0 +1,6 @@
+services:
+  java-demo:
+    build: .
+    container_name: java-demo
+    ports:
+      - "8080:8080"
