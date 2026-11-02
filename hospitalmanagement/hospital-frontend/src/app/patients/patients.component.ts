@@ -22,10 +22,13 @@ export class PatientsComponent implements OnInit {
   }
 
   addPatient() {
-    this.api.createPatient({ name: this.name, age: this.age }).subscribe(() => {
-      this.loadPatients();
-      this.name = '';
-      this.age = null;
+    this.api.createPatient({ name: this.name, age: this.age }).subscribe({
+      next: () => {
+        this.loadPatients();
+        this.name = '';
+        this.age = null;
+      },
+      error: (err) => console.error('Failed to create patient', err)
     });
   }
 }

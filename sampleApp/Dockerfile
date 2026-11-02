@@ -14,16 +14,6 @@ RUN dotnet publish -c Release -o /app/publish
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS runtime
 WORKDIR /app
 
-# Create non-root user
-RUN useradd -m appuser
-
-COPY --from=build /app/publish .
-
-# Give appuser ownership of the application files
-RUN chown -R appuser:appuser /app
-
-USER appuser
-
 # Copy published app from build stage
 COPY --from=build /app/publish .
 

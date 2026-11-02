@@ -1,6 +1,6 @@
 <h2>Patients</h2>
 
-<form (submit)="addPatient()" class="form">
+<form (ngSubmit)="addPatient()" class="form">
   <mat-form-field>
     <input matInput placeholder="Name" [(ngModel)]="name" name="name" required>
   </mat-form-field>

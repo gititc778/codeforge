@@ -35,14 +35,17 @@ export class AppointmentsComponent implements OnInit {
       time: this.time
     };
 
-    this.api.createAppointment(payload).subscribe(() => {
-      this.loadAppointments();
+    this.api.createAppointment(payload).subscribe({
+      next: () => {
+        this.loadAppointments();
 
-      // reset form
-      this.patientId = null;
-      this.doctor = '';
-      this.date = '';
-      this.time = '';
+        // reset form
+        this.patientId = null;
+        this.doctor = '';
+        this.date = '';
+        this.time = '';
+      },
+      error: (err) => console.error('Failed to create appointment', err)
     });
   }
 }

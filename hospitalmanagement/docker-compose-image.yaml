@@ -18,7 +18,7 @@ services:
       - hpm
 
   patient-api:
-    image: dockeritc778/patient-api:v10
+    image: dockeritc778/patient-api:v1.1.4
     container_name: patient-api
     restart: always
     ports:
