@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import MySQLdb
 import MySQLdb.cursors
+import time
 
 app = Flask(__name__)
 CORS(app)
@@ -19,17 +20,27 @@ DB_CONFIG = {
 def get_db_connection():
     return MySQLdb.connect(**DB_CONFIG)
 
-# Create patients table if not exists
-with get_db_connection() as conn:
-    cursor = conn.cursor()
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS patients (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            name VARCHAR(255),
-            age INT
-        )
-    """)
-    conn.commit()
+# Create patients table if not exists, retrying until MySQL is reachable
+def init_db(retries=30, delay=2):
+    for attempt in range(1, retries + 1):
+        try:
+            with get_db_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute("""
+                    CREATE TABLE IF NOT EXISTS patients (
+                        id INT AUTO_INCREMENT PRIMARY KEY,
+                        name VARCHAR(255),
+                        age INT
+                    )
+                """)
+                conn.commit()
+            return
+        except MySQLdb.OperationalError as e:
+            print(f"DB not ready (attempt {attempt}/{retries}): {e}", flush=True)
+            time.sleep(delay)
+    raise RuntimeError("Could not connect to MySQL after multiple attempts")
+
+init_db()
 
 # Get all patients
 @app.route('/patients', methods=['GET'])

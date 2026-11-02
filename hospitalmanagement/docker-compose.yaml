@@ -16,6 +16,12 @@ services:
       - "3306:3306"
     networks:
       - hpm
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-ppass123"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
   patient-api:
     build:
@@ -26,7 +32,8 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     networks:
       - hpm
 
@@ -39,7 +46,8 @@ services:
     ports:
       - "3001:3001"
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     networks:
       - hpm
 
